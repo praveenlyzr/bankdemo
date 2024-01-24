@@ -1,51 +1,86 @@
-# Copyright (c) Streamlit Inc. (2018-2022) Snowflake Inc. (2022)
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#     http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
-
 import streamlit as st
-from streamlit.logger import get_logger
+import os
+from audio_recorder_streamlit import audio_recorder
+from openai import OpenAI
+from PIL import Image
+import streamlit as st
 
-LOGGER = get_logger(__name__)
 
+if not os.path.exists('tempDir'):
+    os.makedirs('tempDir')
 
-def run():
-    st.set_page_config(
-        page_title="Hello",
-        page_icon="👋",
+# Make sure to replace 'your_openai_api_key' with your actual OpenAI API key
+os.environ['OPENAI_API_KEY'] = st.secrets["apikey"]
+
+def text_to_notes(text):
+    client = OpenAI()
+    response = client.chat.completions.create(
+        model="gpt-3.5-turbo",
+        messages=[
+            {
+                "role": "system",
+                "content": "You are an expert in taking down notes as bullet points and summarizing big conversations. you make sure no detail is left out. Just share the summarization. Do nor share any additional comments."
+            },
+            {
+                "role": "user",
+                "content": f"Here is my conversation: {text}"
+            }
+        ],
+        temperature=1,
+        max_tokens=256,
+        top_p=1,
+        frequency_penalty=0,
+        presence_penalty=0
     )
+    notes = response.choices[0].message.content
+    return notes
 
-    st.write("# Welcome to Streamlit! 👋")
+def transcribe(location):
+    client = OpenAI()
+    
+    with open(location, "rb") as audio_file:
+        transcript = client.audio.transcriptions.create(
+            model="whisper-1", 
+            file=audio_file
+        )
+    return transcript.text
 
-    st.sidebar.success("Select a demo above.")
+def save_uploadedfile(uploaded_file):
+    with open(os.path.join('tempDir', uploaded_file.name), "wb") as f:
+        f.write(uploaded_file.getbuffer())
+    return st.success(f"Saved File: {uploaded_file.name} to tempDir")
 
-    st.markdown(
-        """
-        Streamlit is an open-source app framework built specifically for
-        Machine Learning and Data Science projects.
-        **👈 Select a demo from the sidebar** to see some examples
-        of what Streamlit can do!
-        ### Want to learn more?
-        - Check out [streamlit.io](https://streamlit.io)
-        - Jump into our [documentation](https://docs.streamlit.io)
-        - Ask a question in our [community
-          forums](https://discuss.streamlit.io)
-        ### See more complex demos
-        - Use a neural net to [analyze the Udacity Self-driving Car Image
-          Dataset](https://github.com/streamlit/demo-self-driving)
-        - Explore a [New York City rideshare dataset](https://github.com/streamlit/demo-uber-nyc-pickups)
-    """
-    )
+image = Image.open("lyzr-logo.png")
+st.image(image, caption="", width=150)
 
+st.title("Transcribe Audio with Whisper")
+st.write('Note: The recording will stop as soon as your pause/stop speaking. So continue to speak without a break to get the full transcript.')
+# Record audio
+audio_bytes = audio_recorder()
+if audio_bytes:
+    st.audio(audio_bytes, format="audio/wav")
+    # Save the recorded audio for transcription
+    with open('tempDir/output.wav', 'wb') as f:
+        f.write(audio_bytes)
+    transcript = transcribe('tempDir/output.wav')
+    st.write(transcript)
+    if transcript:
+        ainotes = text_to_notes(transcript)
+        st.write(ainotes)
 
-if __name__ == "__main__":
-    run()
+# Or upload audio file
+st.subheader('Upload any audio file (.wav format only) and get the transcript', divider=True)
+uploaded_file = st.file_uploader("Upload Files", type=['wav'])
+
+if uploaded_file is not None:
+    file_details = {"FileName": uploaded_file.name, "FileType": uploaded_file.type, "FileSize": uploaded_file.size}
+    st.write(file_details)
+    save_uploadedfile(uploaded_file)
+    audio_file = open(os.path.join('tempDir', uploaded_file.name), "rb")
+    audio_bytes = audio_file.read()
+    st.audio(audio_bytes, format='audio/wav')
+    transcript = transcribe(os.path.join('tempDir', uploaded_file.name))
+    st.write(transcript)
+    if transcript:
+        ainotes = text_to_notes(transcript)
+        st.write(ainotes)

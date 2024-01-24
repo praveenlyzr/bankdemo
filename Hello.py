@@ -8,6 +8,13 @@ import streamlit as st
 if not os.path.exists('tempDir'):
     os.makedirs('tempDir')
 
+# Setup your config
+st.set_page_config(
+    page_title="LyzrVoice DocuFill",
+    layout="centered",  # or "wide" 
+    initial_sidebar_state="auto"
+)
+
 # Setup your OpenAI API key
 os.environ['OPENAI_API_KEY'] = st.secrets["apikey"]
 
@@ -69,8 +76,8 @@ image = Image.open("lyzr-logo.png")
 st.image(image, width=150)
 
 # App title and introduction
-st.title("Smart Form Filler Demo")
-st.markdown("### Welcome to the Smart Form Filler!")
+st.title("LyzrVoice DocuFill Demo")
+st.markdown("### Welcome to the LyzrVoice DocuFill!")
 st.markdown("Upload an audio recording or record your voice directly, and let the AI assist in filling out forms based on the transcript.")
 
 # Instruction for the users

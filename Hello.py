@@ -80,6 +80,69 @@ st.caption('Note: The recording will stop as soon as you pause/stop speaking. Pl
 # Start of the main container
 with st.container():
     audio_bytes = audio_recorder()
+    transcript = """
+    **Transcript for Client Interview - Bank**
+
+**Interview Date:** April 1, 2023
+
+**Begin Transcript**
+
+**Bank Representative (BR):** Good morning, thank you for coming in today. May I have your full name for our records, please?
+
+**Client (C):** Good morning. Yes, my name is Michael James Smith.
+
+**BR:** Thank you, Mr. Smith. And your date of birth, please?
+
+**C:** It's the 9th of August, 1985.
+
+**BR:** Great. Could you confirm your age for me as well?
+
+**C:** Sure, I'm 37 years old.
+
+**BR:** Thank you, Mr. Smith. For our records, could you provide your father's name?
+
+**C:** It's David Richard Smith.
+
+**BR:** Perfect, thank you. Now, I will need your current address, please.
+
+**C:** Of course, it's 123 Oak Drive, Springfield, IL, 62704.
+
+**BR:** Got it. And your email ID?
+
+**C:** It's michael.smith@email.com.
+
+**BR:** Thank you. What's your current occupation, Mr. Smith?
+
+**C:** I'm a mechanical engineer.
+
+**BR:** And your designation at work?
+
+**C:** I am the Lead Project Manager.
+
+**BR:** Excellent. Could you also provide your phone number?
+
+**C:** Certainly. It's +1 555-123-4567.
+
+**BR:** Thank you, Mr. Smith. For verification, what is the city and country of your birth?
+
+**C:** I was born in Springfield, Illinois, USA.
+
+**BR:** Great, and what brings you to the bank today? What's your primary inquiry?
+
+**C:** I am here to inquire about getting a mortgage for a new home purchase.
+
+**BR:** Of course, we can assist with that. Lastly, what documents have you brought with you today to support your inquiry?
+
+**C:** I have my driver's license, social security card, the last two years of tax returns, and three months' worth of pay stubs.
+
+**BR:** Perfect, we should be able to get started with that. Thank you for providing all the necessary information, Mr. Smith.
+
+**C:** No problem at all. Thank you for your help.
+
+**End Transcript**
+
+---
+"""
     if audio_bytes:
         # Record audio
         st.audio(audio_bytes, format="audio/wav")

@@ -84,3 +84,5 @@ if uploaded_file is not None:
     if transcript:
         ainotes = text_to_notes(transcript)
         st.write(ainotes)
+
+        

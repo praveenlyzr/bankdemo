@@ -1,17 +1,17 @@
-import streamlit as st
 import os
 from audio_recorder_streamlit import audio_recorder
 from openai import OpenAI
 from PIL import Image
 import streamlit as st
 
-
+# Create a temporary directory if it doesn't exist
 if not os.path.exists('tempDir'):
     os.makedirs('tempDir')
 
-# Make sure to replace 'your_openai_api_key' with your actual OpenAI API key
+# Setup your OpenAI API key
 os.environ['OPENAI_API_KEY'] = st.secrets["apikey"]
 
+# Function definitions (text_to_notes, transcribe, save_uploadedfile, etc.) go here...
 def text_to_notes(text):
     client = OpenAI()
     response = client.chat.completions.create(
@@ -50,41 +50,57 @@ def save_uploadedfile(uploaded_file):
         f.write(uploaded_file.getbuffer())
     return st.success(f"Saved File: {uploaded_file.name} to tempDir")
 
+# Custom function to style the app
+def style_app():
+    # You can put your CSS styles here
+    st.markdown("""
+    <style>
+    .app-header { visibility: hidden; }
+    .css-18e3th9 { padding-top: 0; padding-bottom: 0; }
+    .css-1d391kg { padding-top: 1rem; padding-right: 1rem; padding-bottom: 1rem; padding-left: 1rem; }
+    </style>
+    """, unsafe_allow_html=True)
+
+# Call the function to apply the styles
+style_app()
+
+# Load and display the logo
 image = Image.open("lyzr-logo.png")
-st.image(image, caption="", width=150)
+st.image(image, width=150)
 
+# App title and introduction
 st.title("Smart Form Filler Demo")
+st.markdown("### Welcome to the Smart Form Filler!")
+st.markdown("Upload an audio recording or record your voice directly, and let the AI assist in filling out forms based on the transcript.")
 
-# st.caption('Note: The recording will stop as soon as your pause/stop speaking. So continue to speak without a break to get the full transcript.')
-# Record audio
-audio_bytes = audio_recorder()
+# Instruction for the users
+st.markdown("#### 🎤 Record or Upload Audio")
+st.caption('Note: The recording will stop as soon as you pause/stop speaking. Please continue to speak without a break to get the full transcript.')
 
-if audio_bytes:
-    st.caption('Note: The recording will stop as soon as your pause/stop speaking. So continue to speak without a break to get the full transcript.')
-    st.audio(audio_bytes, format="audio/wav")
-    # Save the recorded audio for transcription
-    with open('tempDir/output.wav', 'wb') as f:
-        f.write(audio_bytes)
-    transcript = transcribe('tempDir/output.wav')
-    st.write(transcript)
-    st.divider()
-    if transcript:
-        ainotes = text_to_notes(transcript)
-        st.write(ainotes)
+# Start of the main container
+with st.container():
+    audio_bytes = audio_recorder()
+    if audio_bytes:
+        # Record audio
+        st.audio(audio_bytes, format="audio/wav")
+        # Save the recorded audio for transcription
+        with open('tempDir/output.wav', 'wb') as f:
+            f.write(audio_bytes)
+        transcript = transcribe('tempDir/output.wav')
+        changes = st.text_area("Transcript", transcript, height=150)
+        transcript = changes
+        st.markdown("---")
+        # st.write(changes)
+        # Display AI Notes section title
+        st.markdown("#### 📝 AI Notes")
+        if transcript:
+            ainotes = text_to_notes(transcript)
+            st.markdown(ainotes)
 
-# # Or upload audio file
-# st.subheader('Upload any audio file (.wav format only) and get the transcript', divider=True)
-# uploaded_file = st.file_uploader("Upload Files", type=['wav'])
+# Additional features such as file upload can be added in a similar styled container
 
-# if uploaded_file is not None:
-#     file_details = {"FileName": uploaded_file.name, "FileType": uploaded_file.type, "FileSize": uploaded_file.size}
-#     st.write(file_details)
-#     save_uploadedfile(uploaded_file)
-#     audio_file = open(os.path.join('tempDir', uploaded_file.name), "rb")
-#     audio_bytes = audio_file.read()
-#     st.audio(audio_bytes, format='audio/wav')
-#     transcript = transcribe(os.path.join('tempDir', uploaded_file.name))
-#     st.write(transcript)
-#     if transcript:
-#         ainotes = text_to_notes(transcript)
-#         st.write(ainotes)
+# Footer or any additional information
+with st.expander("ℹ️ - About this App"):
+    st.markdown("""
+    This app uses GPT-3 to generate notes from transcribed audio. The audio transcription is powered by OpenAI's Whisper model. For any inquiries or issues, please contact [Support Email]. 
+    """)

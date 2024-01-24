@@ -92,7 +92,7 @@ with st.container():
         st.markdown("---")
         # st.write(changes)
         # Display AI Notes section title
-        st.markdown("#### 📝 AI Notes")
+        st.markdown("#### 📝 AI Form")
         if transcript:
             ainotes = text_to_notes(transcript)
             st.markdown(ainotes)
@@ -102,5 +102,10 @@ with st.container():
 # Footer or any additional information
 with st.expander("ℹ️ - About this App"):
     st.markdown("""
-    This app uses GPT-3 to generate notes from transcribed audio. The audio transcription is powered by OpenAI's Whisper model. For any inquiries or issues, please contact [Support Email]. 
+    This app uses Lyzr Core to generate notes from transcribed audio. The audio transcription is powered by OpenAI's Whisper model. For any inquiries or issues, please contact Lyzr.
+    
     """)
+    st.link_button("Lyzr", url='https://www.lyzr.ai/', use_container_width = True)
+    st.link_button("Book a Demo", url='https://www.lyzr.ai/book-demo/', use_container_width = True)
+    st.link_button("Discord", url='https://discord.gg/nm7zSyEFA2', use_container_width = True)
+    st.link_button("Slack", url='https://join.slack.com/t/genaiforenterprise/shared_invite/zt-2a7fr38f7-_QDOY1W1WSlSiYNAEncLGw', use_container_width = True)

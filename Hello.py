@@ -82,7 +82,7 @@ st.markdown("### Welcome to the LyzrVoice DocuFill!")
 st.markdown("Upload an audio recording or record your voice directly, and let the AI assist in filling out forms based on the transcript.")
 
 # Instruction for the users
-st.markdown("#### 🎤 Record or Try a Sample Script")
+st.markdown("#### 🎤 Record, Upload, or Try a Sample Script")
 st.caption('Note: The recording will stop as soon as you pause/stop speaking. Please continue to speak without a break to get the full transcript.')
 
 # Start of the main container

@@ -168,8 +168,9 @@ with st.container():
     st.markdown("---")
 
     # Display AI Notes section title
-    st.markdown("#### 📝 AI Form")
+    
     if transcript:
+        st.markdown("#### 📝 DocuFill Completed Form")
         ainotes = text_to_notes(transcript)
         st.markdown(ainotes)
 

@@ -12,7 +12,8 @@ if not os.path.exists('tempDir'):
 st.set_page_config(
     page_title="LyzrVoice DocuFill",
     layout="centered",  # or "wide" 
-    initial_sidebar_state="auto"
+    initial_sidebar_state="auto",
+    page_icon="lyzr-logo-cut.png"
 )
 
 # Setup your OpenAI API key

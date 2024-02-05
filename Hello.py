@@ -16,8 +16,16 @@ st.set_page_config(
     page_icon="lyzr-logo-cut.png"
 )
 
-# Setup your OpenAI API key
-os.environ['OPENAI_API_KEY'] = st.secrets["apikey"]
+# # Setup your OpenAI API key
+# os.environ['OPENAI_API_KEY'] = st.secrets["apikey"]
+
+# Setup your OpenAI API key 
+api_key = st.sidebar.text_input("API Key", type="password")
+if api_key:
+    os.environ['OPENAI_API_KEY'] = api_key
+else:
+    # Display a message to prompt user input if the API key is not provided
+    st.sidebar.warning("Please enter your API key to proceed.")
 
 # Function definitions (text_to_notes, transcribe, save_uploadedfile, etc.) go here...
 def text_to_notes(text):
